@@ -4,56 +4,97 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    //movement
-    public CharacterController controller;
-    /* 
-    public Transform cam;
-    public float speed = 6f;
-    public float turnSmoothTime = 0.1f;
-    private float turnSmoothVelocity;
- */
-
-    public float speed = 10f;
-
-
     
+    public CharacterController controller;
+    //movement
+    public float speed = 10f;
+    private Rigidbody rigidbody;
+    
+
+    //gravity
+    public float gravity = -9.81f;
+    Vector3 velocity;
+
+    //ground check
+    public Transform groundCheck;
+    public float groundDistance = 0.4f;
+    public LayerMask groundMask;
+    bool isGrounded = true;
+
+
+    //jump
+    public float jumpHeight = 13f;
+    public float VerticalVelocity;
+
+
+
 
     // Start is called before the first frame update
     void Start()
     {
       
-    }
+    }//start
 
     // Update is called once per frame
     void Update()
     {
-      /*   //movement
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
 
-        Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
-        if(direction.magnitude >= 0.1f){
+        if(isGrounded && velocity.y < 0){
+            velocity.y = -2f;
 
-            //rotation
-            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime );
-            transform.rotation = Quaternion.Euler(0f, angle, 0f);
-            Vector3 moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+        }
 
-            controller.Move(moveDirection.normalized * speed * Time.deltaTime);
-        } */
-
-
-
+      //movement
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
 
         Vector3 move = transform.right * x + transform.forward * y;
+
+        if(move != Vector3.zero){
+            controller.Move(move * speed * Time.deltaTime);
+        }
+        //else{}
+
+
+
         
-        controller.Move(move * speed * Time.deltaTime);
+    
         
          
+    }//update
+    private void FixedUpdate() {
+        jump();
     }
+/* 
+    private void FixedUpdate() {
+        
+        if(controller.isGrounded){
+            VerticalVelocity = gravity * Time.deltaTime;
+
+            if(Input.GetButtonDown("Jump")){
+                VerticalVelocity = jumpHeight;
+            }
+        }else{
+            VerticalVelocity += gravity * Time.deltaTime;
+          
+
+        }
+          velocity = new Vector3(0f, VerticalVelocity, 0f);
+            controller.Move(velocity * Time.deltaTime);
+        
+
+
+    }//fixedupdate */
+
+    void jump(){
+        if(Input.GetButtonDown("Jump") && isGrounded){
+            isGrounded = false;
+            rigidbody.AddForce(new Vector2(0f, jumpHeight), ForceMode.Impulse);
+
+        }
+    }
+
 
 }
