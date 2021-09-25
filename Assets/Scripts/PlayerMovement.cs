@@ -8,7 +8,7 @@ public class PlayerMovement : MonoBehaviour
     public CharacterController controller;
     //movement
     public float speed = 10f;
-    private Rigidbody rigidbody;
+    private Rigidbody rigidBody;
     
 
     //gravity
@@ -26,13 +26,18 @@ public class PlayerMovement : MonoBehaviour
     public float jumpHeight = 13f;
     public float VerticalVelocity;
 
+    //camera
+    private Camera playerCamera;
+
+
 
 
 
     // Start is called before the first frame update
     void Start()
     {
-      
+      playerCamera = transform.Find("Camera").GetComponent<Camera>();
+      rigidBody = GetComponent<Rigidbody>();
     }//start
 
     // Update is called once per frame
@@ -56,12 +61,6 @@ public class PlayerMovement : MonoBehaviour
             controller.Move(move * speed * Time.deltaTime);
         }
         //else{}
-
-
-
-        
-    
-        
          
     }//update
     private void FixedUpdate() {
@@ -91,7 +90,7 @@ public class PlayerMovement : MonoBehaviour
     void jump(){
         if(Input.GetButtonDown("Jump") && isGrounded){
             isGrounded = false;
-            rigidbody.AddForce(new Vector2(0f, jumpHeight), ForceMode.Impulse);
+            rigidBody.AddForce(new Vector3(0f, jumpHeight, 0f), ForceMode.Impulse);
 
         }
     }
